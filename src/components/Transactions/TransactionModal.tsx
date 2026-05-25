@@ -19,10 +19,12 @@ export default function TransactionModal({ onClose }: Props) {
   });
 
   const selectedProduct = products.find((p) => p.id === form.productId);
+  const isOutOfStock = selectedProduct && form.type === 'out' && form.quantity > selectedProduct.currentStock;
+  const canSubmit = Boolean(form.productId && form.quantity >= 1 && !isOutOfStock);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!form.productId || form.quantity < 1) return;
+    if (!canSubmit) return;
     addTransaction({
       ...form,
       productName: selectedProduct?.name ?? '',
@@ -117,7 +119,15 @@ export default function TransactionModal({ onClose }: Props) {
             <button type="button" onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 py-2 rounded-lg text-sm font-medium hover:bg-slate-50">
               취소
             </button>
-            <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                canSubmit
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+              }`}
+            >
               등록
             </button>
           </div>

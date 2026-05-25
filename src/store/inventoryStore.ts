@@ -19,7 +19,14 @@ export const useInventoryStore = create<InventoryStore>((set) => ({
       const newTx: Transaction = {
         ...tx,
         id: `t${Date.now()}`,
-        createdAt: new Date().toLocaleString('ko-KR', { hour12: false }).slice(0, 16),
+        createdAt: new Intl.DateTimeFormat('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).format(new Date()),
       };
       const updatedProducts = state.products.map((p) => {
         if (p.id !== tx.productId) return p;
